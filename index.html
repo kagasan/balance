@@ -3,6 +3,7 @@
 const pts = [];
 const R = 10;
 let lock = false;
+let gr = true;
 function min(a, b){
     if(a < b)return a;
     return b;
@@ -34,6 +35,9 @@ function keydown(key){
     if(key === "q"){
         lock = !lock;
     }
+    if(key === "a"){
+        gr = !gr;
+    }
 }
 function loop(){
     drawScreen(rgb(240, 240, 240));
@@ -43,7 +47,8 @@ function loop(){
         let mn_x = pt.x;
         let mn_y = pt.y;
         let mx_x = pt.x;
-        let mx_y = pt.y - 10;
+        let mx_y = pt.y;
+        if(gr)mx_y -= 10;
         let flag = false;
         pts.forEach((qt, jdx) => {
             if(idx != jdx && conflict(pt.x, pt.y, R, qt.x, qt.y, R)){
@@ -67,7 +72,15 @@ function loop(){
         else drawCircle(pt.x, pt.y, R, rgb(250, 0, 0), -1);
     });
     if(lock)drawCircle(20, 20, 8, rgb(0, 0, 255), -1);
-    else drawCircle(20, 20, 8, rgb(255, 0, 0), -1);
+    else drawCircle(20, 20, 8, rgb(255, 0, 0), 1);
+    if(gr)drawCircle(20, 50, 8, rgb(0, 0, 0), -1);
+    else drawCircle(20, 50, 8, rgb(0, 0, 0), 2);
+    
+
+    drawString(35, 10, "q : lock");
+    drawString(35, 40, "a : gravity");
+    drawString(5, 70, "space : clear");
+    
 }
 </script>
     
