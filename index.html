@@ -1,8 +1,73 @@
 <script src = "kgrng.js"></script>
 <script>
-    function init(){}
-    function click(x, y){}
-    function keydown(key){}
-    function loop(){}
+const pts = [];
+const R = 10;
+let lock = false;
+function min(a, b){
+    if(a < b)return a;
+    return b;
+}
+function max(a, b){
+    if(a > b)return a;
+    return b;
+}
+function conflict(x1, y1, r1, x2, y2, r2){
+    const w2 = (x1 - x2) * (x1 - x2);
+    const h2 = (y1 - y2) * (y1 - y2);
+    if((w2 + h2) > ((r1 + r2) * (r1 + r2))){
+        return false;
+    }
+    return true;
+}
+
+function init(){
+    changeTitle("balance");
+}
+function click(x, y){
+    if(lock)pts.push({x: x, y: y, l: true});
+    else pts.push({x: x, y: y, l: false});
+}
+function keydown(key){
+    if(key === " "){
+        while(pts.length)pts.pop();
+    }
+    if(key === "q"){
+        lock = !lock;
+    }
+}
+function loop(){
+    drawScreen(rgb(240, 240, 240));
+    const newPts = [];
+    pts.forEach((pt, idx) => {newPts.push(pt)});
+    pts.forEach((pt, idx) => {
+        let mn_x = pt.x;
+        let mn_y = pt.y;
+        let mx_x = pt.x;
+        let mx_y = pt.y - 10;
+        let flag = false;
+        pts.forEach((qt, jdx) => {
+            if(idx != jdx && conflict(pt.x, pt.y, R, qt.x, qt.y, R)){
+                mn_x = min(mn_x, qt.x);
+                mn_y = min(mn_y, qt.y);
+                mx_x = max(mx_x, qt.x);
+                mx_y = max(mx_y, qt.y);
+            }
+        });
+        if(!pt.l){
+            const px = parseInt((mn_x + mx_x) / 2);
+            const py = parseInt((mn_y + mx_y) / 2);
+            const dx = (pt.x - px) / 10;
+            const dy = (pt.y - py) / 10;
+            newPts[idx].x += dx;
+            newPts[idx].y += dy;
+        }
+    });
+    pts.forEach(pt => {
+        if(pt.l)drawCircle(pt.x, pt.y, R, rgb(0, 0, 255), -1);
+        else drawCircle(pt.x, pt.y, R, rgb(250, 0, 0), -1);
+    });
+    if(lock)drawCircle(20, 20, 8, rgb(0, 0, 255), -1);
+    else drawCircle(20, 20, 8, rgb(255, 0, 0), -1);
+}
 </script>
     
